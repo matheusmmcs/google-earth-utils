@@ -1,0 +1,27 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+.btn-mgn-left {
+	margin-left: 10px;
+}
+
+.app-radio-inline label {
+	margin-left: 15px;
+}
+.app-radio-inline label:first-child {
+	margin-left: 0;
+}
+.jumbotron p {
+    margin-bottom: 15px;
+    font-size: 17px;
+    font-weight: 200;
+}
+.jumbotron hr {
+	border-top: 1px solid #ddd;
+} 
