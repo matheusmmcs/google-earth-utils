@@ -8,10 +8,11 @@
 			
 			var name = trimInitEnd($('#name').val());
 			var coordinates = trimInitEnd($('#coordinates').val());
-			var valid = validateForm(name, coordinates);
+			var height = trimInitEnd($('#height').val());
+			var valid = validateForm(name, height, coordinates);
 
 			if (valid) {
-				coordinates = normalizeCoords(coordinates);
+				coordinates = normalizeCoords(coordinates, height);
 				if (coordinates) {
 					var xml = generateKML(name, coordinates);
 					var typeDownload = $('input[name=download-type]:checked').val();
@@ -26,8 +27,12 @@
 			
 		});
 
-		function validateForm(name, coordinates) {
+		function validateForm(name, height, coordinates) {
 			var valid = true;
+			if (!height || !isNumeric(height)) {
+				alert('Preencha a altura do Polígono em formato numérico.');
+				valid = false;
+			}
 			if (!name) {
 				alert('Preencha o nome do Polígono.');
 				valid = false;
@@ -39,13 +44,13 @@
 			return valid;
 		}
 
-		function normalizeCoords(coordinates) {
+		function normalizeCoords(coordinates, height) {
 			var arrCoords = coordinates.split('\n'), newCoord = '';
 			for (var i = 0; i < arrCoords.length; i++) {
 				newCoord = arrCoords[i].replace(/\s/g, '');
 				if (newCoord.length == 0) {
 				} else if (/^(\-?[|\d\.]+)\,(\-?[\d|\.]+)$/g.test(newCoord)) {
-					arrCoords[i] = newCoord+',5';
+					arrCoords[i] = newCoord+','+height;
 				} else {
 					alert('Coordenadas incorretas para o Polígono.');
 					return null;
@@ -62,12 +67,13 @@
 		function generateKML(name, coordinates) {
 			var str = '';
 			str += '<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2">';
-			str += '<Style id="style1"><LineStyle><color>996173ff</color></LineStyle><PolyStyle><color>8058ff7d</color></PolyStyle></Style>';
+			str += '<Document><Style id="transBluePoly"><LineStyle><width>2.5</width></LineStyle><PolyStyle><color>30ffffff</color></PolyStyle></Style>';
+			//str += '<Style id="style1"><LineStyle><color>996173ff</color></LineStyle><PolyStyle><color>8058ff7d</color></PolyStyle></Style>';
 			str += '<Placemark><name>';
 			str += name;
-			str += '</name><styleUrl>#style1</styleUrl><Polygon><extrude>1</extrude><altitudeMode>relativeToGround</altitudeMode><outerBoundaryIs><LinearRing><coordinates>';
+			str += '</name><styleUrl>#transBluePoly</styleUrl><Polygon><extrude>1</extrude><altitudeMode>relativeToGround</altitudeMode><outerBoundaryIs><LinearRing><coordinates>';
 			str += coordinates;
-			str += '</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></kml>';
+			str += '</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>';
 			return str;
 		}
 
@@ -99,6 +105,10 @@
 
 		function trimInitEnd (str) {
 		    return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+		}
+
+		function isNumeric(n) {
+		  return !isNaN(parseFloat(n)) && isFinite(n);
 		}
 
 	});
